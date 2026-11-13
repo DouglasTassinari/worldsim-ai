@@ -39,7 +39,7 @@ Retorne somente o objeto JSON.
 def parse_decision(raw: str, state: CountryState) -> PolicyDecision:
     text = raw.strip()
     if text.startswith("```"):
-        text = text.split("\\n", 1)[-1].rsplit("```", 1)[0].strip()
+        text = text.split("\n", 1)[-1].rsplit("```", 1)[0].strip()
     decision = PolicyDecision.model_validate_json(text)
     if decision.country_code != state.code or decision.year != state.year + 1:
         raise ValueError("Agent returned a decision for the wrong country or year.")
