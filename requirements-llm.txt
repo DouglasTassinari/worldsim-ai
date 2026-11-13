@@ -1,0 +1,4 @@
+# Optional SDKs for live model agents. Install only if you plan to use them.
+openai>=1.40
+anthropic>=0.34
+google-genai>=1.0
