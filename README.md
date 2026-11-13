@@ -9,7 +9,7 @@ Simulador geopolítico multiagente. Governos são representados por agentes inde
 - Estado nacional com PIB indexado, população, inflação, desemprego, dívida/PIB, resultado fiscal, comércio, câmbio, capital humano, infraestrutura, saúde, produtividade, desigualdade, instituições, estabilidade e aprovação.
 - Decisões governamentais estruturadas, com orçamento limitado e políticas tributária, monetária, social, investimento, defesa, comércio e diplomacia.
 - Motor determinístico com choques pseudoaleatórios reproduzíveis por seed.
-- Relações bilaterais com índice de confiança, tarifas e volume comercial.
+- Relações bilaterais com índice de confiança, tarifas e volume comercial.\n- Choques globais reproduzíveis (desaceleração, energia, estresse financeiro, crise sanitária, tecnologia e clima), com probabilidades explicitamente tratadas como hipóteses de jogo.
 - Cenário inicial demonstrativo Brasil–Argentina (valores ilustrativos, não retrato estatístico oficial).
 - Agentes plugáveis: demo local, OpenAI, Anthropic e Gemini.
 - Persistência SQLite de snapshots anuais.
