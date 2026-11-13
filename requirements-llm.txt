@@ -1,0 +1,2 @@
+# Optional SDK for live ChatGPT-powered governors.
+openai>=1.40
