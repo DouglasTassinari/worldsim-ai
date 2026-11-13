@@ -1,7 +1,8 @@
 """Transparent, deterministic rules-based macro simulation (stylized, not a forecast)."""
 from copy import deepcopy
 import random
-from worldsim.models import CountryState, PolicyDecision, YearRecord, WorldState
+from worldsim.models import CountryState, PolicyDecision, YearRecord, WorldState, GlobalEvent
+from worldsim.events import generate_global_events
 
 
 def clamp(v: float, lo: float, hi: float) -> float:
@@ -12,7 +13,7 @@ class SimulationEngine:
     def __init__(self, seed: int = 42):
         self.seed = seed
 
-    def advance(self, state: CountryState, decision: PolicyDecision) -> YearRecord:
+    def advance(self, state: CountryState, decision: PolicyDecision, global_events: list[GlobalEvent] | None = None) -> YearRecord:
         if decision.country_code != state.code:
             raise ValueError("Decision country_code does not match state.")
         if decision.year != state.year + 1:
@@ -20,7 +21,7 @@ class SimulationEngine:
 
         s = deepcopy(state)
         rng = random.Random(f"{self.seed}:{state.code}:{decision.year}")
-        events: list[str] = []
+        events: list[str] = [event.title for event in (global_events or [])]
         old = state
 
         # Budget allocations are shares of a stylized public budget.
@@ -44,7 +45,7 @@ class SimulationEngine:
         # Monetary policy influences inflation with a lag and has a short-run output cost.
         inflation_pressure = 0.16 * (growth - s.potential_growth) - 0.10 * decision.tax_change
         inflation_pressure -= 0.42 * decision.monetary_tightening
-        inflation_pressure += rng.uniform(-0.25, 0.25)
+        inflation_pressure += rng.uniform(-0.25, 0.25) + event_inflation
         s.inflation = clamp(s.inflation + inflation_pressure, 0.2, 250)
 
         # Employment responds to growth, investment and the inflation/interest trade-off.
@@ -67,7 +68,7 @@ class SimulationEngine:
         s.treasury = clamp(s.treasury - max(0, -s.fiscal_balance - 2) * 0.12 + max(0, s.fiscal_balance) * 0.08, 0, 100)
 
         # External competitiveness and exchange rate pressure.
-        s.trade_balance = clamp(s.trade_balance + 0.12 * decision.trade_openness - 0.04 * (growth - 2), -20, 20)
+        s.trade_balance = clamp(s.trade_balance + 0.12 * decision.trade_openness - 0.04 * (growth - 2) + event_trade, -20, 20)
         fx_pressure = 0.12 * (s.inflation - 4) - 0.10 * s.trade_balance - 0.08 * decision.monetary_tightening
         s.exchange_rate_index = max(5, s.exchange_rate_index * (1 + fx_pressure / 100))
 
@@ -102,7 +103,7 @@ class SimulationEngine:
         for code, state in world.countries.items():
             if code not in decisions:
                 raise ValueError(f"Missing decision for {code}")
-            record = self.advance(state, decisions[code])
+            record = self.advance(state, decisions[code], global_events)
             next_world.countries[code] = record.state
             records.append(record)
         for relation in next_world.relations:
