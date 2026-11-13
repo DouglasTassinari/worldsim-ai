@@ -21,6 +21,8 @@ class CountryState(BaseModel):
     year: int = 2026
     gdp_index: float = Field(default=100, gt=0)
     population_m: float = Field(default=50, gt=0)
+    population_growth_pct: float = Field(default=0.5, ge=-5, le=5)
+    potential_growth: float = Field(default=2.0, ge=-10, le=15)
     inflation: float = Field(default=4, ge=0, le=300)
     unemployment: float = Field(default=7, ge=0, le=100)
     approval: float = Field(default=50, ge=0, le=100)
