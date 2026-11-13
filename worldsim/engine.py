@@ -31,7 +31,7 @@ class SimulationEngine:
         institution_impulse = (decision.institutions_budget - 5) / 5
 
         # Demand, supply, productivity and external conditions.
-        demand = 0.25 * decision.tax_change - 0.38 * decision.monetary_tightening
+        demand = -0.25 * decision.tax_change - 0.38 * decision.monetary_tightening
         public_investment = 0.10 * infrastructure_impulse
         human_capital = 0.045 * (s.education - 50) / 10 + 0.035 * education_impulse
         productivity = 0.035 * (s.productivity - 50) / 10
@@ -39,10 +39,10 @@ class SimulationEngine:
         inflation_drag = max(0, s.inflation - 4.0) * 0.055
         unemployment_gap = (7.0 - s.unemployment) * 0.035
         shock = rng.uniform(-0.65, 0.65)
-        growth = 1.8 + demand + public_investment + human_capital + productivity + institutions + unemployment_gap - inflation_drag + shock
+        growth = s.potential_growth + demand + public_investment + human_capital + productivity + institutions + unemployment_gap - inflation_drag + shock
 
         # Monetary policy influences inflation with a lag and has a short-run output cost.
-        inflation_pressure = 0.16 * (growth - 1.8) + 0.18 * decision.tax_change
+        inflation_pressure = 0.16 * (growth - s.potential_growth) - 0.10 * decision.tax_change
         inflation_pressure -= 0.42 * decision.monetary_tightening
         inflation_pressure += rng.uniform(-0.25, 0.25)
         s.inflation = clamp(s.inflation + inflation_pressure, 0.2, 250)
@@ -73,7 +73,7 @@ class SimulationEngine:
 
         # Social outcomes and political legitimacy.
         s.inequality = clamp(s.inequality - 0.025 * health_impulse - 0.025 * education_impulse + 0.02 * max(0, -s.fiscal_balance - 5), 0, 100)
-        s.population_m = max(0.1, s.population_m * (1 + (0.75 - 0.003 * max(0, s.population_m - 100)) / 100))
+        s.population_m = max(0.1, s.population_m * (1 + s.population_growth_pct / 100))
         s.stability = clamp(s.stability + 0.04 * (s.approval - 50) - 0.10 * max(0, s.inflation - 8) - 0.10 * max(0, s.unemployment - 10) + 0.04 * institution_impulse, 0, 100)
         approval_delta = 0.10 * (growth - 2) - 0.08 * (s.inflation - old.inflation) - 0.12 * (s.unemployment - old.unemployment) + 0.025 * (s.health - old.health) - 0.025 * (s.inequality - old.inequality)
         s.approval = clamp(s.approval + approval_delta, 0, 100)
