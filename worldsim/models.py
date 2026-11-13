@@ -72,6 +72,15 @@ class BilateralRelation(BaseModel):
     trade_volume: float = Field(default=10, ge=0)
 
 
+class GlobalEvent(BaseModel):
+    code: str
+    title: str
+    description: str
+    growth_impact: float = 0
+    inflation_impact: float = 0
+    trade_impact: float = 0
+
+
 class WorldState(BaseModel):
     year: int = 2026
     countries: dict[str, CountryState]
