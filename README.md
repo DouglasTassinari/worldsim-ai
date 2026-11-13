@@ -83,7 +83,7 @@ tests/                         # testes automatizados
 
 ## Próximas prioridades de pesquisa e engenharia
 
-- Calibrar as condições iniciais com dados oficiais (Banco Mundial, FMI, bancos centrais e institutos nacionais), com fonte, data e unidade por variável.
+- Completar a calibração das variáveis estruturais com dados oficiais (Banco Mundial, FMI, bancos centrais e institutos nacionais), com fonte, data e unidade por variável.
 - Estimar coeficientes usando séries históricas e backtesting; documentar incerteza.
 - Implementar bancos centrais independentes, eleições, coalizões, parlamentos, choques externos, commodities, dívida em moeda estrangeira e risco soberano.
 - Modelar comércio bilateral por setor, cadeias de suprimento, sanções, migração e alianças.
