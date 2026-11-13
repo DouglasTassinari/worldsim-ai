@@ -40,7 +40,11 @@ class SimulationEngine:
         inflation_drag = max(0, s.inflation - 4.0) * 0.055
         unemployment_gap = (7.0 - s.unemployment) * 0.035
         shock = rng.uniform(-0.65, 0.65)
-        growth = s.potential_growth + demand + public_investment + human_capital + productivity + institutions + unemployment_gap - inflation_drag + shock
+        global_events = global_events or []
+        event_growth = sum(event.growth_impact for event in global_events)
+        event_inflation = sum(event.inflation_impact for event in global_events)
+        event_trade = sum(event.trade_impact for event in global_events)
+        growth = s.potential_growth + demand + public_investment + human_capital + productivity + institutions + unemployment_gap - inflation_drag + shock + event_growth
 
         # Monetary policy influences inflation with a lag and has a short-run output cost.
         inflation_pressure = 0.16 * (growth - s.potential_growth) - 0.10 * decision.tax_change
