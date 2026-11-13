@@ -104,6 +104,7 @@ class SimulationEngine:
         """Advance every country once, then update bilateral relations."""
         next_world = deepcopy(world)
         records = []
+        global_events = generate_global_events(world.seed, world.year + 1)
         for code, state in world.countries.items():
             if code not in decisions:
                 raise ValueError(f"Missing decision for {code}")
